@@ -7,6 +7,7 @@ import { useProgress } from '../hooks/useProgress.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import SafeIcon from '../common/SafeIcon.jsx'
 import * as FiIcons from 'react-icons/fi'
+import { FaLinkedin, FaFacebook, FaXTwitter } from 'react-icons/fa6'
 
 const { FiAward, FiDownload, FiShare2, FiHome, FiTarget, FiTrendingUp } = FiIcons
 
@@ -403,6 +404,71 @@ const Conclusion = () => {
                         <SafeIcon icon={FiShare2} className="w-4 h-4" />
                         <span>Share Achievement</span>
                       </button>
+                    </div>
+                    {/* Social Share Section */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <p className="text-sm font-medium text-gray-700 mb-3">Share your achievement:</p>
+                      <div className="flex flex-wrap items-center justify-center gap-3">
+                        {(() => {
+                          // Placeholder (no localhost) – replace with production URL when available
+                          const placeholderUrl = 'https://example.com/procurement-navigator'
+                          const shareUrl = encodeURIComponent(placeholderUrl)
+                          const placeholderToken = '[Insert Certificate Attachment]'
+                          const baseText = `I just earned the Maintenance Procurement Navigator certificate! ${placeholderToken}`
+                          const hashTags = '#Procurement #Maintenance #ProfessionalDevelopment'
+                          const fullText = `${baseText} ${hashTags}`
+                          const shareText = encodeURIComponent(fullText)
+                          const platforms = [
+                            {
+                              name: 'LinkedIn',
+                              // LinkedIn requires a URL; use placeholder URL only (text not supported directly in this endpoint)
+                              href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+                              bg: 'bg-[#0A66C2] hover:bg-[#084f94]',
+                              icon: FaLinkedin
+                            },
+                            {
+                              name: 'Facebook',
+                              href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`,
+                              bg: 'bg-[#1877F2] hover:bg-[#125ec0]',
+                              icon: FaFacebook
+                            },
+                            {
+                              name: 'X',
+                              href: `https://twitter.com/intent/tweet?text=${shareText}`,
+                              bg: 'bg-black hover:bg-neutral-800',
+                              icon: FaXTwitter
+                            }
+                          ]
+                          return (
+                            <>
+                              {platforms.map(p => (
+                                <a
+                                  key={p.name}
+                                  href={p.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`inline-flex items-center space-x-2 ${p.bg} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow`}
+                                  onClick={() => { try { window.gtag && window.gtag('event', 'share', { method: p.name }) } catch(_) {} }}
+                                >
+                                  <p.icon className="w-4 h-4" />
+                                  <span>{p.name}</span>
+                                </a>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(fullText)
+                                  alert('Share text copied. Replace the placeholder with your certificate attachment.')
+                                }}
+                                className="inline-flex items-center space-x-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors shadow"
+                              >
+                                <span>Copy Share Text</span>
+                              </button>
+                            </>
+                          )
+                        })()}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3">Replace the placeholder token [Insert Certificate Attachment] with your downloaded certificate or verification details when posting.</p>
                     </div>
                   </div>
                 ) : (
