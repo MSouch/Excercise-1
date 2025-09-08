@@ -448,7 +448,7 @@ const Conclusion = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className={`inline-flex items-center space-x-2 ${p.bg} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow`}
-                                  onClick={() => { try { window.gtag && window.gtag('event', 'share', { method: p.name }) } catch(_) {} }}
+                                  onClick={() => { try { window.gtag && window.gtag('event', 'share', { method: p.name }) } catch (err) { /* analytics optional */ if (process.env.NODE_ENV === 'development') console.debug('Analytics share event failed', err) } }}
                                 >
                                   <p.icon className="w-4 h-4" />
                                   <span>{p.name}</span>
