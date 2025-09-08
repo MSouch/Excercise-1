@@ -30,10 +30,10 @@ const Dashboard=()=> {
   }
 
   const challenges=[
-    {id: 1,title: 'The Friday Afternoon Crisis',description: 'Emergency purchase classification and verification',path: '/challenge/1'},
-    {id: 2,title: 'The Documentation Dilemma',description: 'Technical procurement package development',path: '/challenge/2'},
-    {id: 3,title: 'The Stakeholder Standoff',description: 'Stakeholder management and collaborative solutions',path: '/challenge/3'},
-    {id: 4,title: 'The Discovery Crisis',description: 'Crisis procurement decision framework',path: '/challenge/4'}
+    {id: 1,title: 'Challenge 1: The Friday Afternoon Crisis',description: 'Emergency purchase classification and verification',path: '/challenge/1'},
+    {id: 2,title: 'Challenge 2: The Documentation Dilemma',description: 'Technical procurement package development',path: '/challenge/2'},
+    {id: 3,title: 'Challenge 3: The Stakeholder Standoff',description: 'Stakeholder management and collaborative solutions',path: '/challenge/3'},
+    {id: 4,title: 'Challenge 4: The Discovery Crisis',description: 'Crisis procurement decision framework',path: '/challenge/4'}
   ]
 
   const getChallengeStatus=(challengeId)=> {
@@ -185,7 +185,15 @@ const Dashboard=()=> {
                     <div>
                       <p className="font-semibold">Certification Ready!</p>
                       <p className="text-sm text-success-100">
-                        <Link to="/conclusion" className="underline hover:no-underline">
+                        <Link
+                          to="/conclusion"
+                          className="underline hover:no-underline"
+                          onClick={(e)=> {
+                            e.preventDefault()
+                            console.log('Dashboard: CTA clicked - navigating to /conclusion')
+                            navigate('/conclusion')
+                          }}
+                        >
                           Generate your certificate
                         </Link>
                       </p>

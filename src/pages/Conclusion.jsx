@@ -7,7 +7,7 @@ import { useProgress } from '../hooks/useProgress.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import SafeIcon from '../common/SafeIcon.jsx'
 import * as FiIcons from 'react-icons/fi'
-import { FaLinkedin, FaFacebook, FaXTwitter } from 'react-icons/fa6'
+import { FaLinkedin, FaFacebook, FaXTwitter, FaArrowDown, FaArrowUp } from 'react-icons/fa6'
 
 const { FiAward, FiDownload, FiShare2, FiHome, FiTarget, FiTrendingUp } = FiIcons
 
@@ -310,25 +310,52 @@ const Conclusion = () => {
             <p className="text-gray-600 mb-6 text-center">
               Organizations that implement systematic maintenance procurement practices like yours see:
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[
-                { metric: '23%', label: 'Reduction in maintenance procurement processing time' },
-                { metric: '31%', label: 'Fewer emergency maintenance purchases' },
-                { metric: '18%', label: 'Improvement in vendor performance' },
-                { metric: '27%', label: 'Decrease in maintenance-related delays' }
-              ].map((stat, index) => (
-                <motion.div 
-                  key={index}
+                { metric: '23%', label: 'Reduction in procurement processing time', direction: 'down' },
+                { metric: '31%', label: 'Fewer emergency maintenance purchases', direction: 'down' },
+                { metric: '27%', label: 'Decrease in maintenance-related delays', direction: 'down' },
+                { metric: '18%', label: 'Improvement in vendor performance', direction: 'up' }
+              ].map((stat, index) => {
+                const IconComp = stat.direction === 'down' ? FaArrowDown : FaArrowUp
+                const color = stat.direction === 'down' ? 'text-success-600' : 'text-primary-600'
+                const bg = stat.direction === 'down' ? 'bg-success-100' : 'bg-primary-100'
+                return (
+                  <motion.div 
+                    key={index}
+                    className="text-center"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
+                  >
+                    <div className={`w-12 h-12 ${bg} rounded-lg flex items-center justify-center mx-auto mb-3`}>
+                      <IconComp className={`w-6 h-6 ${color}`} />
+                    </div>
+                    <p className={`text-2xl font-bold ${color} mb-1`}>{stat.metric}</p>
+                    <p className="text-sm text-gray-600">{stat.label}</p>
+                  </motion.div>
+                )
+              })}
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Overall Event Success</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { metric: 'Faster Decisions', label: 'Improved response time to maintenance crises', icon: FaArrowUp },
+                { metric: 'Higher Reliability', label: 'Better preventive planning outcomes', icon: FaArrowUp },
+                { metric: 'Stronger Compliance', label: 'Audit-ready documentation practices', icon: FaArrowUp }
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
                   className="text-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 + idx * 0.1, duration: 0.5 }}
                 >
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <SafeIcon icon={FiTrendingUp} className="w-6 h-6 text-primary-600" />
+                    <item.icon className="w-6 h-6 text-primary-600" />
                   </div>
-                  <p className="text-2xl font-bold text-primary-600 mb-1">{stat.metric}</p>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <p className="text-base font-semibold text-primary-700 mb-1">{item.metric}</p>
+                  <p className="text-sm text-gray-600">{item.label}</p>
                 </motion.div>
               ))}
             </div>
@@ -383,26 +410,6 @@ const Conclusion = () => {
                       >
                         <SafeIcon icon={FiDownload} className="w-4 h-4" />
                         <span>Download Certificate</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (navigator.share) {
-                            navigator.share({
-                              title: 'Procurement Navigator Certification',
-                              text: 'I just completed the Procurement Navigator training simulation!',
-                              url: window.location.href
-                            })
-                          } else {
-                            // Fallback for browsers that don't support Web Share API
-                            const text = 'I just completed the Procurement Navigator training simulation!'
-                            navigator.clipboard.writeText(`${text} ${window.location.href}`)
-                            alert('Achievement copied to clipboard!')
-                          }
-                        }}
-                        className="inline-flex items-center space-x-2 bg-success-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-success-700 transition-colors"
-                      >
-                        <SafeIcon icon={FiShare2} className="w-4 h-4" />
-                        <span>Share Achievement</span>
                       </button>
                     </div>
                     {/* Social Share Section */}
@@ -524,10 +531,10 @@ const Conclusion = () => {
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900">Continue Learning:</h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>• Advanced Maintenance Contract Negotiation Workshop</li>
-                  <li>• Vendor Relationship Excellence Course</li>
-                  <li>• Strategic Maintenance Procurement Leadership Program</li>
-                  <li>• Other Navigator Series training modules</li>
+                  <li>• <a href="#" className="text-primary-600 hover:underline">Advanced Maintenance Contract Negotiation Workshop</a></li>
+                  <li>• <a href="#" className="text-primary-600 hover:underline">Vendor Relationship Excellence Course</a></li>
+                  <li>• <a href="#" className="text-primary-600 hover:underline">Strategic Maintenance Procurement Leadership Program</a></li>
+                  <li>• <a href="#" className="text-primary-600 hover:underline">Other Navigator Series training modules</a></li>
                 </ul>
               </div>
             </div>

@@ -196,7 +196,7 @@ const Home=()=> {
                 className="inline-flex items-center space-x-2 bg-success-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-success-600 transition-colors"
               >
                 <SafeIcon icon={FiPlay} className="w-5 h-5" />
-                <span>Start Your Journey</span>
+                <span>Start Simulation</span>
               </Link>
             )}
           </motion.div>

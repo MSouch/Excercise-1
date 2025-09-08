@@ -5,14 +5,13 @@ import {useProgress} from '../../hooks/useProgress.jsx'
 import SafeIcon from '../../common/SafeIcon.jsx'
 import * as FiIcons from 'react-icons/fi'
 
-const {FiSave,FiCheckCircle,FiArrowRight,FiBookOpen,FiAlertCircle}=FiIcons
+const {FiCheckCircle,FiArrowRight,FiBookOpen,FiAlertCircle}=FiIcons
 
 const ExerciseForm=({exercise,onComplete})=> {
   const {user}=useAuth()
   const {updateExerciseProgress}=useProgress()
   const [formData,setFormData]=useState({})
   const [loading,setLoading]=useState(false)
-  const [saved,setSaved]=useState(false)
   const [completed,setCompleted]=useState(false)
   const [showModelAnswer,setShowModelAnswer]=useState(false)
   const [canProceed,setCanProceed]=useState(false)
@@ -22,24 +21,10 @@ const ExerciseForm=({exercise,onComplete})=> {
     // Initialize form data
     const initialData={}
     exercise.fields.forEach(field=> {
-      if (field.type==='ranking') {
-        initialData[field.id]=field.options || []
-      } else {
-        initialData[field.id]=''
-      }
+      initialData[field.id]=field.type==='ranking' ? (field.options || []) : ''
     })
     setFormData(initialData)
   },[exercise])
-
-  useEffect(()=> {
-    // Auto-save every 30 seconds
-    const interval=setInterval(()=> {
-      if (Object.keys(formData).length > 0) {
-        handleAutoSave()
-      }
-    },30000)
-    return ()=> clearInterval(interval)
-  },[formData])
 
   const validateForm=()=> {
     const errors={}
@@ -77,7 +62,6 @@ const ExerciseForm=({exercise,onComplete})=> {
       ...prev,
       [fieldId]: value
     }))
-    setSaved(false)
     
     // Clear validation error for this field
     if (validationErrors[fieldId]) {
@@ -93,7 +77,6 @@ const ExerciseForm=({exercise,onComplete})=> {
       ...prev,
       [fieldId]: items
     }))
-    setSaved(false)
     
     // Clear validation error for this field
     if (validationErrors[fieldId]) {
@@ -102,16 +85,6 @@ const ExerciseForm=({exercise,onComplete})=> {
         [fieldId]: ''
       }))
     }
-  }
-
-  const handleAutoSave=()=> {
-    if (!user || loading) return
-
-    // Save to localStorage for auto-save functionality
-    const exerciseKey=`exercise_${exercise.id}_${user.id}`
-    localStorage.setItem(exerciseKey,JSON.stringify(formData))
-    setSaved(true)
-    setTimeout(()=> setSaved(false),2000)
   }
 
   const handleSubmit=async (e)=> {
@@ -318,18 +291,6 @@ const ExerciseForm=({exercise,onComplete})=> {
         </div>
 
         <div className="p-6">
-          {saved && (
-            <motion.div
-              className="bg-green-50 border border-green-200 rounded-md p-3 mb-6 flex items-center space-x-2"
-              initial={{opacity: 0,y: -10}}
-              animate={{opacity: 1,y: 0}}
-              exit={{opacity: 0,y: -10}}
-            >
-              <SafeIcon icon={FiSave} className="w-4 h-4 text-green-600" />
-              <span className="text-sm text-green-700">Progress auto-saved</span>
-            </motion.div>
-          )}
-
           {completed && !showModelAnswer ? (
             <motion.div
               className="text-center py-12"

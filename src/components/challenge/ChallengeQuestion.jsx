@@ -13,6 +13,8 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
   const [attempts, setAttempts] = useState(0)
   const [showModelAnswer, setShowModelAnswer] = useState(false)
   const {updateProgress} = useProgress()
+  const [awaitingModelContinue, setAwaitingModelContinue] = useState(false)
+  const [awaitingExerciseContinue, setAwaitingExerciseContinue] = useState(false)
 
   const handleAnswerSelect = (answer) => {
     if (!showFeedback) {
@@ -35,13 +37,8 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
     await updateProgress(challenge.id, {selectedAnswer, attempts: attempts + 1}, correct, score)
 
     if (correct) {
-      // Show model answer after 2 seconds, then proceed to exercise after another 3 seconds
-      setTimeout(() => {
-        setShowModelAnswer(true)
-        setTimeout(() => {
-          onComplete(challenge.id)
-        }, 4000) // 4 seconds to read model answer
-      }, 2000)
+      // Wait for user to click Continue to view model answer
+      setAwaitingModelContinue(true)
     }
   }
 
@@ -73,7 +70,7 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
               <span className="text-sm">Attempts: {attempts}</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-4">{challenge.title}</h1>
+          <h1 className="text-2xl font-bold mb-4">Challenge {challenge.id}: {challenge.title}</h1>
         </div>
 
         {/* Scenario Content */}
@@ -181,9 +178,17 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
                   </p>
                   <p>{challenge.feedback[challenge.correctAnswer].explanation}</p>
                 </div>
-                <div className="flex items-center justify-center space-x-2 text-success-700 mt-6">
-                  <span className="text-sm font-medium">Proceeding to hands-on exercise...</span>
-                  <SafeIcon icon={FiArrowRight} className="w-4 h-4" />
+                <div className="flex items-center justify-center mt-6">
+                  <button
+                    onClick={() => {
+                      setAwaitingExerciseContinue(true)
+                      onComplete(challenge.id)
+                    }}
+                    className="inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                  >
+                    <span>Continue to Exercise</span>
+                    <SafeIcon icon={FiArrowRight} className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -191,7 +196,7 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
         )}
 
         {/* Feedback Section */}
-        {showFeedback && feedback && !showModelAnswer && (
+  {showFeedback && feedback && !showModelAnswer && (
           <motion.div
             className={`border-t-2 p-6 ${
               isCorrect ? 'border-success-500 bg-success-50' : 'border-red-500 bg-red-50'
@@ -241,6 +246,14 @@ const ChallengeQuestion = ({challenge, onComplete}) => {
                       className="bg-primary-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
                     >
                       Try Again
+                    </button>
+                  )}
+                  {isCorrect && awaitingModelContinue && (
+                    <button
+                      onClick={() => { setShowModelAnswer(true); setAwaitingModelContinue(false) }}
+                      className="bg-success-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-success-700 transition-colors"
+                    >
+                      Continue
                     </button>
                   )}
                 </div>
