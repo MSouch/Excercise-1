@@ -103,13 +103,7 @@ const Conclusion = () => {
   const userName = user?.full_name || user?.user_metadata?.full_name || 'Participant'
       pdf.text(`This certifies that ${userName}`, pageWidth / 2, 80, { align: 'center' })
 
-      // User email
-      pdf.setFontSize(12)
-      pdf.setTextColor(107, 114, 128)
-  const userEmail = user?.email || user?.user_metadata?.email || ''
-      if (userEmail) {
-        pdf.text(`(${userEmail})`, pageWidth / 2, 90, { align: 'center' })
-      }
+      // Email omitted for privacy
 
       // Achievement
       pdf.setFontSize(16)
@@ -147,12 +141,7 @@ const Conclusion = () => {
       pdf.setTextColor(107, 114, 128)
       pdf.text('Completion Code: PN0300', 20, pageHeight - 30, { align: 'left' })
 
-      // Certificate verification info (lower right corner)
-      if (userEmail) {
-        pdf.setFontSize(8)
-        pdf.setTextColor(107, 114, 128)
-        pdf.text(`Issued to: ${userEmail}`, pageWidth - 20, pageHeight - 40, { align: 'right' })
-      }
+      // Certificate verification info: email omitted for privacy
 
       // Copyright (bottom center) - moved down to create proper separation
       pdf.setFontSize(8)
@@ -174,7 +163,7 @@ const Conclusion = () => {
       // Save certificate info to localStorage
       const certificateData = {
         user_id: user?.id || 'anonymous',
-        user_email: user?.email || user?.user_metadata?.email || null,
+  // user_email removed
         user_name: userName,
         certificate_code: 'PN0300',
         score_level: calculateScoreLevel(),
@@ -384,11 +373,7 @@ const Conclusion = () => {
                 <p className="text-primary-100 text-sm mt-2">
                   Completion Code: PN0300
                 </p>
-                {user?.email && (
-                  <p className="text-primary-100 text-xs mt-2">
-                    Issued to: {user.email}
-                  </p>
-                )}
+                {/* Email removed for privacy; we no longer collect email */}
               </div>
 
               <div className="space-y-4">
@@ -534,7 +519,7 @@ const Conclusion = () => {
                   <li>• <a href="#" className="text-primary-600 hover:underline">Advanced Maintenance Contract Negotiation Workshop</a></li>
                   <li>• <a href="#" className="text-primary-600 hover:underline">Vendor Relationship Excellence Course</a></li>
                   <li>• <a href="#" className="text-primary-600 hover:underline">Strategic Maintenance Procurement Leadership Program</a></li>
-                  <li>• <a href="#" className="text-primary-600 hover:underline">Other Navigator Series training modules</a></li>
+                  <li>• <a href="#" className="text-primary-600 hover:underline">Other Navigator Series training courses</a></li>
                 </ul>
               </div>
             </div>

@@ -2,7 +2,7 @@ export const exerciseContent = {
   1: {
     id: 1,
     title: "Emergency Purchase Assessment Matrix",
-    description: "Complete this Emergency Purchase Verification for the hydraulic seal situation:",
+  description: "Complete this Emergency Purchase Verification for the hydraulic seal situation.",
     fields: [
       {
         id: 'safety_risk',
@@ -114,7 +114,7 @@ export const exerciseContent = {
   2: {
     id: 2,
     title: "Technical Procurement Package Development",
-    description: "Create the essential documentation for the control system upgrade:",
+  description: "Create the essential documentation for the control system upgrade.",
     fields: [
       {
         id: 'spec1',
@@ -233,7 +233,7 @@ export const exerciseContent = {
   3: {
     id: 3,
     title: "Stakeholder Needs Analysis & Solution Development",
-    description: "Map each stakeholder's underlying concern and identify solutions:",
+  description: "Map each stakeholder's underlying concern and identify solutions.",
     fields: [
       {
         id: 'engineering_concern',
@@ -356,7 +356,7 @@ export const exerciseContent = {
   4: {
     id: 4,
     title: "Crisis Procurement Decision Framework",
-    description: "Apply systematic crisis management to the heat exchanger situation:",
+  description: "Apply systematic crisis management to the heat exchanger situation.",
     fields: [
       {
         id: 'discovery_details',
@@ -384,69 +384,69 @@ export const exerciseContent = {
       },
       {
         id: 'price_weight',
-        label: 'Price Weight (1-10)',
+        label: 'Price Weight',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a weight (e.g., 1-10)'
       },
       {
         id: 'delivery_weight',
-        label: 'Delivery Timeline Weight (1-10)',
+        label: 'Delivery Timeline Weight',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a weight (e.g., 1-10)'
       },
       {
         id: 'quality_weight',
-        label: 'Quality Assurance Weight (1-10)',
+        label: 'Quality Assurance Weight',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a weight (e.g., 1-10)'
       },
       {
         id: 'support_weight',
-        label: 'Technical Support Weight (1-10)',
+        label: 'Technical Support Weight',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a weight (e.g., 1-10)'
       },
       {
         id: 'risk_weight',
-        label: 'Risk Level Weight (1-10)',
+        label: 'Risk Level Weight',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a weight (e.g., 1-10)'
       },
       {
         id: 'current_vendor_quality',
-        label: 'Current Vendor - Quality Rating (1-10)',
+        label: 'Current Vendor - Quality Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'current_vendor_support',
-        label: 'Current Vendor - Support Rating (1-10)',
+        label: 'Current Vendor - Support Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'current_vendor_risk',
-        label: 'Current Vendor - Risk Rating (1-10)',
+        label: 'Current Vendor - Risk Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'rebuilder_quality',
-        label: 'Rebuilder - Quality Rating (1-10)',
+        label: 'Rebuilder - Quality Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'rebuilder_support',
-        label: 'Rebuilder - Support Rating (1-10)',
+        label: 'Rebuilder - Support Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'rebuilder_risk',
-        label: 'Rebuilder - Risk Rating (1-10)',
+        label: 'Rebuilder - Risk Rating',
         type: 'number',
-        placeholder: '1-10'
+        placeholder: 'Enter a rating (e.g., 1-10)'
       },
       {
         id: 'recommended_vendor',

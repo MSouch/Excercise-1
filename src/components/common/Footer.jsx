@@ -26,7 +26,8 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <p className="text-sm text-gray-300">
-              For support or questions about the Navigator series, please contact our training team.
+              For support or questions about the Navigator series, please contact our training team at
+              {' '}<a href="mailto:support@ap-learning.com" className="text-primary-300 hover:text-primary-200 underline">support@ap-learning.com</a>.
             </p>
           </div>
         </div>
