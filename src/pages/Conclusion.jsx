@@ -3,21 +3,21 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Layout from '../components/common/Layout.jsx'
 import logoImg from '../assets/AP-Networks-LearningSytems-Full-DivOf (6).png'
+import medallionImg from '../assets/APLS-Medallion-2025_Procurement.png'
 import { useProgress } from '../hooks/useProgress.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import SafeIcon from '../common/SafeIcon.jsx'
 import * as FiIcons from 'react-icons/fi'
-import { FaLinkedin, FaFacebook, FaXTwitter, FaArrowDown, FaArrowUp } from 'react-icons/fa6'
+import { FaLinkedin, FaFacebook, FaXTwitter, FaArrowDown, FaArrowUp, FaCopy, FaCheck } from 'react-icons/fa6'
 
-const { FiAward, FiDownload, FiShare2, FiHome, FiTarget, FiTrendingUp } = FiIcons
+const { FiAward, FiDownload, FiShare2, FiHome, FiTarget, FiTrendingUp, FiShield } = FiIcons
 
 const Conclusion = () => {
   const { user } = useAuth()
   const { progress } = useProgress()
-  const [certificateUrl, setCertificateUrl] = useState(null)
-  const [generating, setGenerating] = useState(false)
-  const [certificateGenerated, setCertificateGenerated] = useState(false)
-  const [certificateError, setCertificateError] = useState(null)
+  const [credentialId, setCredentialId] = useState(null)
+  const [copiedId, setCopiedId] = useState(false)
+  const [copiedShareText, setCopiedShareText] = useState(false)
 
   const calculateScoreLevel = () => {
     const { completedChallenges, totalChallenges } = progress
@@ -27,204 +27,67 @@ const Conclusion = () => {
     return 'Needs Training'
   }
 
-  const generateCertificate = async () => {
-    console.log('Starting certificate generation...')
-    setGenerating(true)
-    setCertificateError(null)
-    
-    try {
-      // Warn but continue if user missing
-      if (!user) {
-        console.warn('generateCertificate: No user found - proceeding with placeholder identity')
-      }
-      // Dynamic import of jsPDF to ensure it loads properly
-      const { jsPDF } = await import('jspdf')
-      console.log('jsPDF loaded successfully')
-      
-      const pdf = new jsPDF('landscape')
-      const pageWidth = pdf.internal.pageSize.width
-      const pageHeight = pdf.internal.pageSize.height
+  // Generate unique credential ID
+  const generateCredentialId = () => {
+    // Generate a UUID v4-like unique identifier
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0
+      const v = c === 'x' ? r : (r & 0x3 | 0x8)
+      return v.toString(16)
+    })
+  }
 
-      console.log('PDF dimensions:', { pageWidth, pageHeight })
-
-      // Background
-      pdf.setFillColor(248, 250, 252)
-      pdf.rect(0, 0, pageWidth, pageHeight, 'F')
-
-      // Border
-      pdf.setDrawColor(59, 130, 246)
-      pdf.setLineWidth(3)
-      pdf.rect(10, 10, pageWidth - 20, pageHeight - 20)
-
-      // APLS Logo (upper left corner)
-      try {
-        // Convert imported image to data URL via canvas for reliability
-        const img = new Image()
-        img.src = logoImg
-        await new Promise((res, rej) => {
-          img.onload = () => res()
-          img.onerror = (e) => rej(e)
-        })
-        const canvas = document.createElement('canvas')
-        canvas.width = img.naturalWidth
-        canvas.height = img.naturalHeight
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0)
-        const dataUrl = canvas.toDataURL('image/png')
-        // Desired display width in PDF (maintain aspect ratio)
-        const displayWidth = 55
-        const aspect = img.naturalHeight / img.naturalWidth
-        const displayHeight = displayWidth * aspect
-        pdf.addImage(dataUrl, 'PNG', 20, 18, displayWidth, displayHeight)
-        console.log('Logo added to PDF')
-      } catch (e) {
-        console.warn('Failed to add logo, falling back to placeholder', e)
-        pdf.setDrawColor(200, 200, 200)
-        pdf.setLineWidth(1)
-        pdf.rect(20, 20, 55, 25)
-        pdf.setFontSize(8)
-        pdf.setTextColor(150, 150, 150)
-        pdf.text('APLS LOGO', 25, 35, { align: 'left' })
-      }
-
-      // Header
-      pdf.setFontSize(24)
-      pdf.setTextColor(59, 130, 246)
-      pdf.text('CERTIFICATE OF COMPLETION', pageWidth / 2, 40, { align: 'center' })
-
-      // Subtitle
-      pdf.setFontSize(16)
-      pdf.setTextColor(75, 85, 99)
-      pdf.text('Procurement Navigator Training Simulation', pageWidth / 2, 55, { align: 'center' })
-
-      // User name
-      pdf.setFontSize(20)
-      pdf.setTextColor(17, 24, 39)
-  const userName = user?.full_name || user?.user_metadata?.full_name || 'Participant'
-      pdf.text(`This certifies that ${userName}`, pageWidth / 2, 80, { align: 'center' })
-
-      // Email omitted for privacy
-
-      // Achievement
-      pdf.setFontSize(16)
-      pdf.setTextColor(75, 85, 99)
-      pdf.text('has successfully completed the Procurement Navigator training simulation', pageWidth / 2, 105, { align: 'center' })
-      pdf.text('and demonstrated mastery of industrial maintenance procurement principles', pageWidth / 2, 120, { align: 'center' })
-
-      // Score level
-      pdf.setFontSize(18)
-      pdf.setTextColor(34, 197, 94)
-      pdf.text(`Achievement Level: ${calculateScoreLevel()}`, pageWidth / 2, 140, { align: 'center' })
-
-      // Date
-      pdf.setFontSize(12)
-      pdf.setTextColor(107, 114, 128)
-      const date = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-      pdf.text(`Completed on ${date}`, pageWidth / 2, 160, { align: 'center' })
-
-      // Company info - Fixed positioning to prevent overlap
-      pdf.setFontSize(14)
-      pdf.setTextColor(59, 130, 246)
-      pdf.text('AP-Learning Systems', pageWidth / 2, 180, { align: 'center' })
-      
-      // Division text - moved up slightly and made smaller to create more space
-      pdf.setFontSize(10)
-      pdf.setTextColor(107, 114, 128)
-      pdf.text('A Division of AP-Networks LLC', pageWidth / 2, 190, { align: 'center' })
-
-      // Completion Code (lower left corner)
-      pdf.setFontSize(10)
-      pdf.setTextColor(107, 114, 128)
-      pdf.text('Completion Code: PN0300', 20, pageHeight - 30, { align: 'left' })
-
-      // Certificate verification info: email omitted for privacy
-
-      // Copyright (bottom center) - moved down to create proper separation
-      pdf.setFontSize(8)
-      pdf.setTextColor(107, 114, 128)
-      pdf.text('© 2025 AP-Learning Systems, a Division of AP-Networks LLC - ALL RIGHTS RESERVED', 
-               pageWidth / 2, pageHeight - 15, { align: 'center' })
-
-      console.log('PDF content generated successfully')
-
-      // Save certificate
-      const pdfBlob = pdf.output('blob')
-      const url = URL.createObjectURL(pdfBlob)
-      
-      console.log('Certificate blob created:', { size: pdfBlob.size, type: pdfBlob.type })
-      
-      setCertificateUrl(url)
-      setCertificateGenerated(true)
-
-      // Save certificate info to localStorage
-      const certificateData = {
-        user_id: user?.id || 'anonymous',
-  // user_email removed
-        user_name: userName,
-        certificate_code: 'PN0300',
-        score_level: calculateScoreLevel(),
-        total_score: progress.overallScore,
-        issued_at: new Date().toISOString(),
-        url
-      }
-      
-      localStorage.setItem('procurementCertificate', JSON.stringify(certificateData))
-      console.log('Certificate data saved to localStorage')
-
-    } catch (error) {
-      console.error('Error generating certificate:', error)
-      setCertificateError('Error generating certificate. Please retry.')
-    } finally {
-      setGenerating(false)
+  // Copy credential ID to clipboard
+  const copyCredentialId = () => {
+    if (credentialId) {
+      navigator.clipboard.writeText(credentialId)
+      setCopiedId(true)
+      setTimeout(() => setCopiedId(false), 2000)
     }
   }
 
-  const downloadCertificate = () => {
-    console.log('Download certificate clicked, URL:', certificateUrl)
-    
-    if (certificateUrl) {
-      try {
-        const userName = user?.full_name || user?.user_metadata?.full_name || 'Participant'
-        const fileName = `Procurement-Navigator-Certificate-${userName.replace(/\s+/g, '-')}.pdf`
-        
-        // Create download link
-        const link = document.createElement('a')
-        link.href = certificateUrl
-        link.download = fileName
-        link.style.display = 'none'
-        
-        // Append to body, click, and remove
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        
-        console.log('Certificate download initiated:', fileName)
-      } catch (error) {
-        console.error('Error downloading certificate:', error)
-        alert('There was an error downloading your certificate. Please try again.')
-      }
-    } else {
-      console.error('No certificate URL available for download')
-      alert('Certificate not ready. Please wait for generation to complete.')
-    }
+  // Copy share text to clipboard
+  const copyShareText = () => {
+    const shareText = `I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\nCredential ID: ${credentialId}\n\n#Procurement #Maintenance #ProfessionalDevelopment #APLearningSystems`
+    navigator.clipboard.writeText(shareText)
+    setCopiedShareText(true)
+    setTimeout(() => setCopiedShareText(false), 2000)
   }
 
-  // Generate certificate when component mounts if all challenges are complete
+  // Generate credential ID when component mounts if all challenges are complete
   useEffect(() => {
     console.log('Conclusion useEffect triggered')
     console.log('Progress:', progress)
     console.log('Completed challenges:', progress.completedChallenges)
     console.log('Total challenges:', progress.totalChallenges)
     
-    if (progress.completedChallenges === progress.totalChallenges && !certificateGenerated && !generating) {
-      console.log('All challenges complete, generating certificate...')
-      generateCertificate()
+    if (progress.completedChallenges === progress.totalChallenges && !credentialId) {
+      // Check if credential already exists in localStorage
+      const storedCredential = localStorage.getItem('procurementCredential')
+      if (storedCredential) {
+        const data = JSON.parse(storedCredential)
+        setCredentialId(data.credential_id)
+      } else {
+        // Generate new credential ID
+        const newCredentialId = generateCredentialId()
+        setCredentialId(newCredentialId)
+        
+        // Save credential info to localStorage
+        const userName = user?.full_name || user?.user_metadata?.full_name || 'Participant'
+        const credentialData = {
+          user_id: user?.id || 'anonymous',
+          user_name: userName,
+          credential_id: newCredentialId,
+          score_level: calculateScoreLevel(),
+          total_score: progress.overallScore,
+          issued_at: new Date().toISOString()
+        }
+        
+        localStorage.setItem('procurementCredential', JSON.stringify(credentialData))
+        console.log('Credential data saved to localStorage:', credentialData)
+      }
     }
-  }, [progress, certificateGenerated, generating])
+  }, [progress, credentialId, user])
 
   const performanceImpacts = [
     { challenge: 'Challenge 1', impact: 'Prevented $255,000 in production losses through proper emergency maintenance procedures' },
@@ -350,146 +213,204 @@ const Conclusion = () => {
             </div>
           </motion.div>
 
-          {/* Certificate Section */}
+          {/* Digital Credential Section */}
           <motion.div 
-            className="bg-white rounded-lg shadow-lg p-8 mb-8"
+            className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-2xl p-8 mb-8 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.0, duration: 0.6 }}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Certificate of Completion
+            <h2 className="text-3xl font-bold mb-2 text-center">
+              Digital Credential Awarded
             </h2>
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-primary-500 to-success-500 rounded-lg p-6 text-white mb-6">
-                <SafeIcon icon={FiAward} className="w-12 h-12 mx-auto mb-3" />
-                <h3 className="text-xl font-bold mb-2">Certified Maintenance Procurement Navigator</h3>
-                <p className="text-primary-100">
-                  Achievement Level: {calculateScoreLevel()}
-                </p>
-                <p className="text-primary-100 text-sm">
-                  Overall Score: {progress.overallScore}%
-                </p>
-                <p className="text-primary-100 text-sm mt-2">
-                  Completion Code: PN0300
-                </p>
-                {/* Email removed for privacy; we no longer collect email */}
+            <p className="text-blue-100 text-center mb-8">
+              Maintenance Procurement Navigator Program
+            </p>
+
+            {/* Badge Display */}
+            <div className="bg-white rounded-xl p-8 mb-8 text-center">
+              <div className="inline-block relative mb-6">
+                <img 
+                  src={medallionImg} 
+                  alt="APLS Procurement Navigator Medallion" 
+                  className="w-56 h-56 mx-auto drop-shadow-2xl"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-green-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+                  {calculateScoreLevel().toUpperCase()}
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Certified Maintenance Procurement Professional
+              </h3>
+              <p className="text-gray-600 font-medium">
+                {user?.full_name || user?.user_metadata?.full_name || 'Participant'}
+              </p>
+            </div>
+
+            {/* Credential Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Credential Information */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <SafeIcon icon={FiShield} className="w-5 h-5 mr-2" />
+                  Credential Details
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-blue-100">Credential Name:</span>
+                    <span className="font-semibold">Procurement Navigator</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-100">Issued By:</span>
+                    <span className="font-semibold">AP-Learning Systems</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-100">Issue Date:</span>
+                    <span className="font-semibold">
+                      {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-100">Achievement Level:</span>
+                    <span className="font-semibold">{calculateScoreLevel()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-100">Overall Score:</span>
+                    <span className="font-semibold">{progress.overallScore}%</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                {generating ? (
-                  <div className="flex items-center justify-center space-x-2 py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
-                    <span className="text-gray-600">Generating your certificate...</span>
-                  </div>
-                ) : certificateGenerated && certificateUrl ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-center space-x-2 text-success-600 mb-4">
-                      <SafeIcon icon={FiAward} className="w-5 h-5" />
-                      <span className="font-medium">Certificate Ready!</span>
-                    </div>
-                    <div className="space-x-4">
-                      <button
-                        onClick={downloadCertificate}
-                        className="inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors shadow-lg"
-                      >
-                        <SafeIcon icon={FiDownload} className="w-4 h-4" />
-                        <span>Download Certificate</span>
-                      </button>
-                    </div>
-                    {/* Social Share Section */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <p className="text-sm font-medium text-gray-700 mb-3">Share your achievement:</p>
-                      <div className="flex flex-wrap items-center justify-center gap-3">
-                        {(() => {
-                          // Placeholder (no localhost) – replace with production URL when available
-                          const placeholderUrl = 'https://example.com/procurement-navigator'
-                          const shareUrl = encodeURIComponent(placeholderUrl)
-                          const placeholderToken = '[Insert Certificate Attachment]'
-                          const baseText = `I just earned the Maintenance Procurement Navigator certificate! ${placeholderToken}`
-                          const hashTags = '#Procurement #Maintenance #ProfessionalDevelopment'
-                          const fullText = `${baseText} ${hashTags}`
-                          const shareText = encodeURIComponent(fullText)
-                          const platforms = [
-                            {
-                              name: 'LinkedIn',
-                              // LinkedIn requires a URL; use placeholder URL only (text not supported directly in this endpoint)
-                              href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
-                              bg: 'bg-[#0A66C2] hover:bg-[#084f94]',
-                              icon: FaLinkedin
-                            },
-                            {
-                              name: 'Facebook',
-                              href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`,
-                              bg: 'bg-[#1877F2] hover:bg-[#125ec0]',
-                              icon: FaFacebook
-                            },
-                            {
-                              name: 'X',
-                              href: `https://twitter.com/intent/tweet?text=${shareText}`,
-                              bg: 'bg-black hover:bg-neutral-800',
-                              icon: FaXTwitter
-                            }
-                          ]
-                          return (
-                            <>
-                              {platforms.map(p => (
-                                <a
-                                  key={p.name}
-                                  href={p.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`inline-flex items-center space-x-2 ${p.bg} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow`}
-                                  onClick={() => { try { window.gtag && window.gtag('event', 'share', { method: p.name }) } catch (err) { /* analytics optional */ if (process.env.NODE_ENV === 'development') console.debug('Analytics share event failed', err) } }}
-                                >
-                                  <p.icon className="w-4 h-4" />
-                                  <span>{p.name}</span>
-                                </a>
-                              ))}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(fullText)
-                                  alert('Share text copied. Replace the placeholder with your certificate attachment.')
-                                }}
-                                className="inline-flex items-center space-x-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors shadow"
-                              >
-                                <span>Copy Share Text</span>
-                              </button>
-                            </>
-                          )
-                        })()}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-3">Replace the placeholder token [Insert Certificate Attachment] with your downloaded certificate or verification details when posting.</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="py-4">
-                    <button
-                      onClick={generateCertificate}
-                      disabled={generating || progress.completedChallenges < progress.totalChallenges}
-                      className="inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <SafeIcon icon={FiAward} className="w-4 h-4" />
-                      <span>{generating ? 'Generating...' : 'Generate Certificate'}</span>
-                    </button>
-                    {progress.completedChallenges < progress.totalChallenges && (
-                      <p className="text-sm text-gray-500 mt-2">
-                        Complete all challenges to generate your certificate
-                      </p>
-                    )}
-                    {certificateError && (
-                      <p className="text-sm text-red-600 mt-2">
-                        {certificateError}
-                        <button
-                          onClick={generateCertificate}
-                          className="ml-2 underline text-red-700 hover:text-red-800"
-                        >Retry</button>
-                      </p>
-                    )}
-                  </div>
-                )}
+              {/* Credential ID */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-xl font-bold mb-4">Unique Credential ID</h3>
+                <div className="bg-white/20 rounded-lg p-4 mb-3">
+                  <p className="text-xs text-blue-100 mb-1">Verification ID:</p>
+                  <p className="font-mono text-sm break-all">
+                    {credentialId || 'Generating...'}
+                  </p>
+                </div>
+                <button
+                  onClick={copyCredentialId}
+                  disabled={!credentialId}
+                  className="w-full bg-white text-blue-700 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  {copiedId ? (
+                    <>
+                      <FaCheck className="w-4 h-4" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaCopy className="w-4 h-4" />
+                      <span>Copy ID</span>
+                    </>
+                  )}
+                </button>
               </div>
+            </div>
+
+            {/* Skills Verified */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8">
+              <h3 className="text-xl font-bold mb-4">Skills Verified</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {[
+                  'Emergency maintenance procurement',
+                  'Strategic vendor selection',
+                  'Budget and cost control',
+                  'Stakeholder management',
+                  'Risk assessment and mitigation',
+                  'Documentation and compliance',
+                  'Crisis decision-making',
+                  'Resource allocation optimization'
+                ].map((skill, idx) => (
+                  <div key={idx} className="flex items-start space-x-2">
+                    <SafeIcon icon={FiTarget} className="w-4 h-4 text-green-400 flex-shrink-0 mt-1" />
+                    <span className="text-sm">{skill}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Verification Section */}
+            <div className="bg-green-500 rounded-lg p-6 mb-6 text-center">
+              <h3 className="text-xl font-bold mb-2">Verify This Credential</h3>
+              <p className="text-green-50 text-sm mb-4">
+                This digital credential is secured and can be verified using the unique ID above
+              </p>
+              <div className="text-xs text-green-100">
+                <strong>Verification Method:</strong> Unique identifier system<br/>
+                <strong>Issuer Contact:</strong> credentials@ap-networks.com
+              </div>
+            </div>
+
+            {/* Share Section */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-xl font-bold mb-3 text-center">Share Your Achievement</h3>
+              <p className="text-blue-100 text-sm text-center mb-4">
+                Showcase your professional credential on social media
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 mb-4">
+                {(() => {
+                  const shareUrl = encodeURIComponent('https://ap-networks.com/learning-systems')
+                  const shareText = encodeURIComponent(`I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\nCredential ID: ${credentialId || '[Generating]'}\n\n#Procurement #Maintenance #ProfessionalDevelopment`)
+                  
+                  const platforms = [
+                    {
+                      name: 'LinkedIn',
+                      href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+                      bg: 'bg-[#0A66C2] hover:bg-[#084f94]',
+                      icon: FaLinkedin
+                    },
+                    {
+                      name: 'Facebook',
+                      href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+                      bg: 'bg-[#1877F2] hover:bg-[#125ec0]',
+                      icon: FaFacebook
+                    },
+                    {
+                      name: 'X (Twitter)',
+                      href: `https://twitter.com/intent/tweet?text=${shareText}`,
+                      bg: 'bg-black hover:bg-neutral-700',
+                      icon: FaXTwitter
+                    }
+                  ]
+                  
+                  return platforms.map(p => (
+                    <a
+                      key={p.name}
+                      href={p.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center space-x-2 ${p.bg} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg`}
+                    >
+                      <p.icon className="w-4 h-4" />
+                      <span>{p.name}</span>
+                    </a>
+                  ))
+                })()}
+              </div>
+              <button
+                type="button"
+                onClick={copyShareText}
+                disabled={!credentialId}
+                className="w-full bg-white text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {copiedShareText ? (
+                  <>
+                    <FaCheck className="w-4 h-4" />
+                    <span>Share Text Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <FaCopy className="w-4 h-4" />
+                    <span>Copy Share Text</span>
+                  </>
+                )}
+              </button>
+              <p className="text-xs text-blue-100 mt-3 text-center">
+                <strong>Tip:</strong> Add this credential to your LinkedIn profile under "Licenses & Certifications"
+              </p>
             </div>
           </motion.div>
 

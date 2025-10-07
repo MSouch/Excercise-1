@@ -38,9 +38,28 @@ const AuthGuard = ({ children }) => {
   }
 
   // Check conclusion access
-  if (location.pathname === '/conclusion' && progress.completedChallenges < 4) {
-    console.log(`AuthGuard: Conclusion blocked - only ${progress.completedChallenges}/4 challenges completed`)
-    return <Navigate to="/dashboard" replace />
+  // Only block if we're certain they haven't completed enough challenges
+  // Allow access if completedChallenges >= 4 to prevent race condition issues
+  if (location.pathname === '/conclusion') {
+    // Check localStorage directly as backup in case state hasn't updated
+    const storedProgress = localStorage.getItem('procurementProgress')
+    if (storedProgress) {
+      const parsedProgress = JSON.parse(storedProgress)
+      const completedCount = parsedProgress.completedChallenges || 0
+      
+      console.log(`AuthGuard: Checking conclusion access - completed: ${completedCount}, state: ${progress.completedChallenges}`)
+      
+      // Use the maximum of state and localStorage to handle race conditions
+      const actualCompleted = Math.max(completedCount, progress.completedChallenges)
+      
+      if (actualCompleted < 4) {
+        console.log(`AuthGuard: Conclusion blocked - only ${actualCompleted}/4 challenges completed`)
+        return <Navigate to="/dashboard" replace />
+      }
+    } else if (progress.completedChallenges < 4) {
+      console.log(`AuthGuard: Conclusion blocked - only ${progress.completedChallenges}/4 challenges completed`)
+      return <Navigate to="/dashboard" replace />
+    }
   }
 
   console.log('AuthGuard: Access granted for:', location.pathname)

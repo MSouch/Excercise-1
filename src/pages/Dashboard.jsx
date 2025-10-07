@@ -188,13 +188,8 @@ const Dashboard=()=> {
                         <Link
                           to="/conclusion"
                           className="underline hover:no-underline"
-                          onClick={(e)=> {
-                            e.preventDefault()
-                            console.log('Dashboard: CTA clicked - navigating to /conclusion')
-                            navigate('/conclusion')
-                          }}
                         >
-                          Generate your certificate
+                          View your credential
                         </Link>
                       </p>
                     </div>
@@ -314,7 +309,7 @@ const Dashboard=()=> {
                   </p>
                 )}
                 {progress.completedChallenges===4 && (
-                  <p className="font-semibold text-success-700">• All challenges complete - generate your certificate!</p>
+                  <p className="font-semibold text-success-700">• All challenges complete - view your credential!</p>
                 )}
               </div>
             </motion.div>

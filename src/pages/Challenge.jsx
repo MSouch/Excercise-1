@@ -74,14 +74,9 @@ const Challenge = () => {
 
   const handleExerciseComplete = () => {
     console.log(`Challenge Page: Exercise ${challengeId} completed`)
-    // Navigate to next challenge or conclusion based on completion
-    if (challengeId < 4) {
-      console.log(`Challenge Page: Navigating to Challenge ${challengeId + 1}`)
-      navigate(`/challenge/${challengeId + 1}`)
-    } else {
-      console.log(`Challenge Page: All challenges complete, navigating to conclusion`)
-      navigate('/conclusion')
-    }
+    // Always navigate back to dashboard after exercise completion
+    console.log(`Challenge Page: Navigating to dashboard`)
+    navigate('/dashboard')
   }
 
   // Show loading spinner while loading
