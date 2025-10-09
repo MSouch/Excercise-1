@@ -122,58 +122,11 @@ const ConclusionMedallion = () => {
               <img src={medallionImg} alt="APLS Procurement Navigator Medallion" className="w-56 h-56 mx-auto drop-shadow-2xl" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Certified Maintenance Procurement Professional</h3>
-            <p className="text-gray-600 font-medium mb-6">{user?.full_name || user?.user_metadata?.full_name || 'Participant'}</p>
-            
-            <div className="mb-6">
-              <button onClick={downloadMedallion} className="inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
-                <SafeIcon icon={FiShield} className="w-5 h-5" />
+            <p className="text-gray-600 font-medium">{user?.full_name || user?.user_metadata?.full_name || 'Participant'}</p>
+            <div className="mt-4">
+              <button onClick={downloadMedallion} className="inline-flex items-center space-x-2 bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors">
+                <SafeIcon icon={FiShield} className="w-4 h-4" />
                 <span>Download Medallion PNG</span>
-              </button>
-            </div>
-
-            <div className="border-t pt-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Credential Details</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex justify-between">
-                  <span>Issued By:</span>
-                  <span className="font-semibold text-gray-900">AP-Learning Systems</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Issue Date:</span>
-                  <span className="font-semibold text-gray-900">{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Achievement Level:</span>
-                  <span className="font-semibold text-gray-900">{calculateScoreLevel()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Overall Score:</span>
-                  <span className="font-semibold text-gray-900">{progress?.overallScore || 0}%</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t mt-6 pt-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Share Your Achievement</h4>
-              <div className="flex flex-wrap justify-center gap-3 mb-4">
-                {(() => {
-                  const shareUrl = encodeURIComponent('https://ap-networks.com/learning-systems')
-                  const shareText = encodeURIComponent(`I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\n#Procurement #Maintenance #ProfessionalDevelopment`)
-                  const platforms = [
-                    { name: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, bg: 'bg-[#0A66C2] hover:bg-[#084f94]', icon: FaLinkedin },
-                    { name: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, bg: 'bg-[#1877F2] hover:bg-[#125ec0]', icon: FaFacebook },
-                    { name: 'X', href: `https://twitter.com/intent/tweet?text=${shareText}`, bg: 'bg-black hover:bg-neutral-700', icon: FaXTwitter }
-                  ]
-                  return platforms.map(p => (
-                    <a key={p.name} href={p.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center space-x-2 ${p.bg} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors`}>
-                      <p.icon className="w-4 h-4" />
-                      <span>{p.name}</span>
-                    </a>
-                  ))
-                })()}
-              </div>
-              <button type="button" onClick={copyShareText} className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
-                {copiedShareText ? (<><FaCheck className="w-4 h-4" /><span>Copied!</span></>) : (<><FaCopy className="w-4 h-4" /><span>Copy Share Text</span></>)}
               </button>
             </div>
           </motion.div>
