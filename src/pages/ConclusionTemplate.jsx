@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Layout from '../components/common/Layout.jsx'
-import medallionImg from '../assets/APLS-Medallion-2025_Procurement.png'
 import { useProgress } from '../hooks/useProgress.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import SafeIcon from '../common/SafeIcon.jsx'
@@ -11,11 +10,114 @@ import { FaLinkedin, FaFacebook, FaXTwitter, FaCopy, FaCheck, FaArrowDown, FaArr
 
 const { FiShield, FiTarget, FiHome, FiDownload } = FiIcons
 
-// Self-contained medallion credential page
-// - Usage: drop this file under src/pages and ensure the referenced imports exist in your project
-// - Dependencies: Layout, useAuth, useProgress, SafeIcon, Tailwind CSS (or adjust classes)
+// ============================================================================
+// SIMULATION-SPECIFIC CONFIGURATION
+// ============================================================================
+// 👉 UPDATE THESE VALUES FOR EACH NEW SIMULATION
+// ============================================================================
 
-const ConclusionMedallion = () => {
+const SIMULATION_CONFIG = {
+  // Simulation Identity
+  name: 'Procurement Navigator', // Full name of the simulation
+  credentialTitle: 'Certified Maintenance Procurement Professional', // Title on the medallion
+  programName: 'Maintenance Procurement Navigator Program', // Subtitle on page
+  completionCode: 'PN0300', // Unique completion code
+  
+  // Medallion Image
+  // 👉 REPLACE THIS IMPORT with your simulation's medallion image
+  medallionImage: '/path/to/your/medallion.png', // Import your medallion image and set it here
+  
+  // Share Text Configuration
+  shareText: {
+    message: 'I just earned the Maintenance Procurement Navigator Digital Credential! 🏆',
+    hashtags: '#Procurement #Maintenance #ProfessionalDevelopment',
+    url: 'https://ap-networks.com/learning-systems'
+  },
+  
+  // Performance Impact Cards (4 items)
+  performanceImpacts: [
+    { 
+      challenge: 'Challenge 1', 
+      impact: 'Prevented $255,000 in production losses through proper emergency maintenance procedures' 
+    },
+    { 
+      challenge: 'Challenge 2', 
+      impact: 'Avoided 2-4 weeks of delays with comprehensive maintenance project documentation' 
+    },
+    { 
+      challenge: 'Challenge 3', 
+      impact: 'Built stakeholder consensus while staying within maintenance budget constraints' 
+    },
+    { 
+      challenge: 'Challenge 4', 
+      impact: 'Saved $3.67 million by making informed crisis maintenance decisions' 
+    }
+  ],
+  
+  // Real-World Success Statistics (4 metrics)
+  successStatistics: {
+    intro: 'Organizations that implement systematic maintenance procurement practices like yours see:',
+    metrics: [
+      { 
+        metric: '23%', 
+        label: 'Reduction in procurement processing time', 
+        direction: 'down' // 'up' for improvements, 'down' for reductions
+      },
+      { 
+        metric: '31%', 
+        label: 'Fewer emergency maintenance purchases', 
+        direction: 'down' 
+      },
+      { 
+        metric: '27%', 
+        label: 'Decrease in maintenance-related delays', 
+        direction: 'down' 
+      },
+      { 
+        metric: '18%', 
+        label: 'Improvement in vendor performance', 
+        direction: 'up' 
+      }
+    ],
+    // Overall Event Success (3 items)
+    overallSuccess: [
+      { 
+        metric: 'Faster Decisions', 
+        label: 'Improved response time to maintenance crises' 
+      },
+      { 
+        metric: 'Higher Reliability', 
+        label: 'Better preventive planning outcomes' 
+      },
+      { 
+        metric: 'Stronger Compliance', 
+        label: 'Audit-ready documentation practices' 
+      }
+    ]
+  },
+  
+  // Next Steps Configuration
+  nextSteps: {
+    immediateActions: [
+      'Apply these frameworks in your daily maintenance procurement activities',
+      'Share knowledge with colleagues facing similar challenges',
+      'Document lessons learned from each procurement experience',
+      'Build relationships proactively with key vendors and stakeholders'
+    ],
+    continueLinks: [
+      { text: 'Advanced Maintenance Contract Negotiation Workshop', href: '#' },
+      { text: 'Vendor Relationship Excellence Course', href: '#' },
+      { text: 'Strategic Maintenance Procurement Leadership Program', href: '#' },
+      { text: 'Other Navigator Series training courses', href: '#' }
+    ]
+  }
+}
+
+// ============================================================================
+// END CONFIGURATION - DO NOT MODIFY BELOW THIS LINE
+// ============================================================================
+
+const ConclusionTemplate = () => {
   const { user } = useAuth()
   const { progress } = useProgress()
   const [credentialId, setCredentialId] = useState(null)
@@ -29,7 +131,6 @@ const ConclusionMedallion = () => {
     return 'Needs Training'
   }
 
-  // Simple UUID v4 generator for client-side credential IDs
   const generateCredentialId = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       const r = (Math.random() * 16) | 0
@@ -39,7 +140,7 @@ const ConclusionMedallion = () => {
   }
 
   const copyShareText = () => {
-    const shareText = `I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\n#Procurement #Maintenance #ProfessionalDevelopment`
+    const shareText = `${SIMULATION_CONFIG.shareText.message}\n\n${SIMULATION_CONFIG.shareText.hashtags}`
     try {
       navigator.clipboard.writeText(shareText)
       setCopiedShareText(true)
@@ -50,12 +151,11 @@ const ConclusionMedallion = () => {
     }
   }
 
-  // Download medallion PNG
   const downloadMedallion = () => {
     try {
       const link = document.createElement('a')
-      link.href = medallionImg
-      link.download = `APLS-Medallion.png`
+      link.href = SIMULATION_CONFIG.medallionImage
+      link.download = `APLS-${SIMULATION_CONFIG.name.replace(/\s+/g, '-')}-Medallion.png`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -65,7 +165,6 @@ const ConclusionMedallion = () => {
   }
 
   useEffect(() => {
-    // Only create or load a credential if the user completed all challenges
     if (!progress) return
     const completed = progress.completedChallenges || 0
     const total = progress.totalChallenges || 4
@@ -114,7 +213,7 @@ const ConclusionMedallion = () => {
               <SafeIcon icon={FiShield} className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Digital Simulation Expert Credential Awarded</h1>
-            <p className="text-lg text-gray-600">Maintenance Procurement Navigator Program</p>
+            <p className="text-lg text-gray-600">{SIMULATION_CONFIG.programName}</p>
           </motion.div>
 
           {/* Grand Medallion Card */}
@@ -147,12 +246,12 @@ const ConclusionMedallion = () => {
               {/* Medallion Image */}
               <div className="inline-block mb-8 relative">
                 <div className="absolute inset-0 bg-[#005397] opacity-10 rounded-full blur-2xl scale-110"></div>
-                <img src={medallionImg} alt="APLS Procurement Navigator Medallion" className="relative w-64 h-64 mx-auto drop-shadow-2xl" />
+                <img src={SIMULATION_CONFIG.medallionImage} alt={`${SIMULATION_CONFIG.name} Medallion`} className="relative w-64 h-64 mx-auto drop-shadow-2xl" />
               </div>
 
               {/* Title & Name */}
               <div className="mb-8">
-                <h3 className="text-3xl font-bold text-[#005397] mb-3">Certified Maintenance Procurement Professional</h3>
+                <h3 className="text-3xl font-bold text-[#005397] mb-3">{SIMULATION_CONFIG.credentialTitle}</h3>
                 <p className="text-xl text-gray-700 font-semibold">{user?.full_name || user?.user_metadata?.full_name || 'Participant'}</p>
               </div>
 
@@ -177,7 +276,7 @@ const ConclusionMedallion = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <span className="text-sm text-gray-600 block mb-1">Credential Name</span>
-                      <span className="font-semibold text-gray-900">Procurement Navigator</span>
+                      <span className="font-semibold text-gray-900">{SIMULATION_CONFIG.name}</span>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <span className="text-sm text-gray-600 block mb-1">Issued By</span>
@@ -205,8 +304,8 @@ const ConclusionMedallion = () => {
                 <p className="text-gray-600 text-sm mb-6">Showcase your professional credential on social media</p>
                 <div className="flex flex-wrap justify-center gap-3 mb-4">
                   {(() => {
-                    const shareUrl = encodeURIComponent('https://ap-networks.com/learning-systems')
-                    const shareText = encodeURIComponent(`I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\n#Procurement #Maintenance #ProfessionalDevelopment`)
+                    const shareUrl = encodeURIComponent(SIMULATION_CONFIG.shareText.url)
+                    const shareText = encodeURIComponent(`${SIMULATION_CONFIG.shareText.message}\n\n${SIMULATION_CONFIG.shareText.hashtags}`)
                     const platforms = [
                       { name: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, bg: 'bg-[#0A66C2] hover:bg-[#084f94]', icon: FaLinkedin },
                       { name: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, bg: 'bg-[#1877F2] hover:bg-[#125ec0]', icon: FaFacebook },
@@ -243,12 +342,7 @@ const ConclusionMedallion = () => {
               Your Performance Impact
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { challenge: 'Challenge 1', impact: 'Prevented $255,000 in production losses through proper emergency maintenance procedures' },
-                { challenge: 'Challenge 2', impact: 'Avoided 2-4 weeks of delays with comprehensive maintenance project documentation' },
-                { challenge: 'Challenge 3', impact: 'Built stakeholder consensus while staying within maintenance budget constraints' },
-                { challenge: 'Challenge 4', impact: 'Saved $3.67 million by making informed crisis maintenance decisions' }
-              ].map((item, index) => (
+              {SIMULATION_CONFIG.performanceImpacts.map((item, index) => (
                 <motion.div 
                   key={index}
                   className="flex items-start space-x-3"
@@ -279,15 +373,10 @@ const ConclusionMedallion = () => {
               Real-World Success Statistics
             </h2>
             <p className="text-gray-600 mb-6 text-center">
-              Organizations that implement systematic maintenance procurement practices like yours see:
+              {SIMULATION_CONFIG.successStatistics.intro}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[
-                { metric: '23%', label: 'Reduction in procurement processing time', direction: 'down' },
-                { metric: '31%', label: 'Fewer emergency maintenance purchases', direction: 'down' },
-                { metric: '27%', label: 'Decrease in maintenance-related delays', direction: 'down' },
-                { metric: '18%', label: 'Improvement in vendor performance', direction: 'up' }
-              ].map((stat, index) => {
+              {SIMULATION_CONFIG.successStatistics.metrics.map((stat, index) => {
                 const IconComp = stat.direction === 'down' ? FaArrowDown : FaArrowUp
                 const color = stat.direction === 'down' ? 'text-success-600' : 'text-primary-600'
                 const bg = stat.direction === 'down' ? 'bg-success-100' : 'bg-primary-100'
@@ -310,11 +399,7 @@ const ConclusionMedallion = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Overall Event Success</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { metric: 'Faster Decisions', label: 'Improved response time to maintenance crises', icon: FaArrowUp },
-                { metric: 'Higher Reliability', label: 'Better preventive planning outcomes', icon: FaArrowUp },
-                { metric: 'Stronger Compliance', label: 'Audit-ready documentation practices', icon: FaArrowUp }
-              ].map((item, idx) => (
+              {SIMULATION_CONFIG.successStatistics.overallSuccess.map((item, idx) => (
                 <motion.div
                   key={idx}
                   className="text-center"
@@ -323,7 +408,7 @@ const ConclusionMedallion = () => {
                   transition={{ delay: 1.3 + idx * 0.1, duration: 0.5 }}
                 >
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <item.icon className="w-6 h-6 text-primary-600" />
+                    <FaArrowUp className="w-6 h-6 text-primary-600" />
                   </div>
                   <p className="text-base font-semibold text-primary-700 mb-1">{item.metric}</p>
                   <p className="text-sm text-gray-600">{item.label}</p>
@@ -346,19 +431,17 @@ const ConclusionMedallion = () => {
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900">Immediate Actions:</h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>• Apply these frameworks in your daily maintenance procurement activities</li>
-                  <li>• Share knowledge with colleagues facing similar challenges</li>
-                  <li>• Document lessons learned from each procurement experience</li>
-                  <li>• Build relationships proactively with key vendors and stakeholders</li>
+                  {SIMULATION_CONFIG.nextSteps.immediateActions.map((action, idx) => (
+                    <li key={idx}>• {action}</li>
+                  ))}
                 </ul>
               </div>
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900">Continue Learning:</h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>• <a href="#" className="text-primary-600 hover:underline">Advanced Maintenance Contract Negotiation Workshop</a></li>
-                  <li>• <a href="#" className="text-primary-600 hover:underline">Vendor Relationship Excellence Course</a></li>
-                  <li>• <a href="#" className="text-primary-600 hover:underline">Strategic Maintenance Procurement Leadership Program</a></li>
-                  <li>• <a href="#" className="text-primary-600 hover:underline">Other Navigator Series training courses</a></li>
+                  {SIMULATION_CONFIG.nextSteps.continueLinks.map((link, idx) => (
+                    <li key={idx}>• <a href={link.href} className="text-primary-600 hover:underline">{link.text}</a></li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -385,4 +468,4 @@ const ConclusionMedallion = () => {
   )
 }
 
-export default ConclusionMedallion
+export default ConclusionTemplate
