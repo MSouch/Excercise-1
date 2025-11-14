@@ -38,15 +38,36 @@ const ConclusionMedallion = () => {
     })
   }
 
-  const copyShareText = () => {
-    const shareText = `I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\n#Procurement #Maintenance #ProfessionalDevelopment`
+  const copyShareText = async () => {
+    const shareText = `I just completed the Maintenance Procurement Navigator simulation and earned the Maintenance Procurement Navigator Expert certificate!\n\n#Procurement #Maintenance #ProfessionalDevelopment`
     try {
-      navigator.clipboard.writeText(shareText)
+      await navigator.clipboard.writeText(shareText)
       setCopiedShareText(true)
       setTimeout(() => setCopiedShareText(false), 2000)
     } catch (err) {
-      // eslint-disable-next-line no-alert
-      alert(shareText)
+      // Fallback for browsers that don't support Clipboard API
+      try {
+        const textArea = document.createElement('textarea')
+        textArea.value = shareText
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        const successful = document.execCommand('copy')
+        textArea.remove()
+        if (successful) {
+          setCopiedShareText(true)
+          setTimeout(() => setCopiedShareText(false), 2000)
+        } else {
+          // eslint-disable-next-line no-alert
+          alert(shareText)
+        }
+      } catch (fallbackErr) {
+        // eslint-disable-next-line no-alert
+        alert(shareText)
+      }
     }
   }
 
@@ -206,7 +227,7 @@ const ConclusionMedallion = () => {
                 <div className="flex flex-wrap justify-center gap-3 mb-4">
                   {(() => {
                     const shareUrl = encodeURIComponent('https://ap-networks.com/learning-systems')
-                    const shareText = encodeURIComponent(`I just earned the Maintenance Procurement Navigator Digital Credential! 🏆\n\n#Procurement #Maintenance #ProfessionalDevelopment`)
+                    const shareText = encodeURIComponent(`I just completed the Maintenance Procurement Navigator simulation and earned the Maintenance Procurement Navigator Expert certificate!\n\n#Procurement #Maintenance #ProfessionalDevelopment`)
                     const platforms = [
                       { name: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, bg: 'bg-[#0A66C2] hover:bg-[#084f94]', icon: FaLinkedin },
                       { name: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, bg: 'bg-[#1877F2] hover:bg-[#125ec0]', icon: FaFacebook },
